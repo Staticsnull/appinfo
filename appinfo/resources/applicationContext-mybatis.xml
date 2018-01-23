@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans"  
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+        xmlns:aop="http://www.springframework.org/schema/aop"  
+        xmlns:p="http://www.springframework.org/schema/p"  
+        xmlns:tx="http://www.springframework.org/schema/tx"  
+        xmlns:context="http://www.springframework.org/schema/context"  
+        xsi:schemaLocation="   
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd   
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd   
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd 
+            http://www.springframework.org/schema/context 
+            http://www.springframework.org/schema/context/spring-context.xsd">  
+	<!--开启注解扫描  -->            
+	<context:component-scan base-package="cn.appsys.dao"/>
+	<context:component-scan base-package="cn.appsys.service"/>
+	<!--注：由于<context:component-scan base-package=”xx.xx”/>
+	也包含了自动注入上述Bean的功能，所以<context:annotation-config/>
+	 可以省略。如果两者都进行了配置，则只有前者有效。  -->
+	<!--配置属性文件的位置  -->
+	<context:property-placeholder location="classpath:database.properties"/>
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${driver}"/>
+	    <property name="url" value="${url}"/>
+	    <property name="username" value="${user}"/>
+	    <property name="password" value="${password}"/>
+	    <property name="initialSize" value="${initialSize}"/>
+		<property name="maxActive" value="${maxActive}"/>
+		<property name="maxIdle" value="${maxIdle}"/>
+		<property name="minIdle" value="${minIdle}"/>
+		<property name="maxWait" value="${maxWait}"/>
+		<property name="removeAbandoned" value="${removeAbandoned}"/>
+		<property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}"/>
+		<property name= "testWhileIdle" value="true"/>
+		<property name= "timeBetweenEvictionRunsMillis" value="60000"/>
+		<property name= "testOnBorrow" value="false"/>
+		<property name= "testOnReturn" value="false"/>
+		<property name= "validationQuery" value="select 1"/>
+		<property name= "numTestsPerEvictionRun" value="${maxActive}"/>
+	</bean>
+	<!-- 配置sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<!--指定映射文件所在的位置  -->
+		<!-- <property name="mapperLocations">
+			<list><value>classpath:mapper/*/*.xml</value></list>
+		</property> -->
+	</bean>
+	<!--配置MapperScannerConfigurer  -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="cn.appsys.dao"/>
+	</bean>
+	<!--定义事务管理bean  -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<!--定义事务增强 id  -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!--方法名以appsys 为开头的方法采用事务管理  -->
+			<tx:method name="deleteAppInfo*" propagation="REQUIRED" rollback-for="Exception"/>
+			<tx:method name="*"/>
+		</tx:attributes>
+	</tx:advice>
+	<!--定义aop 将事务增强与切入点结合  -->
+	<aop:config>
+		<aop:pointcut expression="execution(* *cn.appsys.service..*(..))" id="pointcut"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"/>
+	</aop:config>
+</beans>

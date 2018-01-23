@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	<context:component-scan base-package="cn.appsys.controller"/>
+	<!-- 配置静态资源的位置 -->
+	<mvc:resources location="/statics/" mapping="/statics/**"/>
+	<!-- 配置多视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="defaultContentType" value="text/html"/>
+		<!--favorParameter:表示支持参数匹配,可以根据请求的参数值确定
+			多用途互联网邮件扩展类型 默认值匹配的请求参数为:format  -->
+		<property name="favorParameter" value="true"/>
+		<!-- mediaTypes:根据请求的参数值 和MIME 的映射列表,确定以何种
+			形式的视图展示页面:比如请求的参数值为:json,mediaTypes则会
+			以application/json 的格式进行数据的展示-->
+		<property name="mediaTypes">
+			<map>
+				<entry key="html" value="text/html;charset=UTF-8"/>
+				<entry key="json" value="application/json;charset=UTF-8"/>
+				<entry key="xml" value="application/xml;charset=UTF-8"/>
+			</map>
+		</property>
+		<!--配置视图解析器  -->
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/jsp/"/>
+					<property name="suffix" value=".jsp"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	<!-- 配置消息转换器 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<!-- 配置supportedMediaTypes:的目的是解决
+				返回json字符串时出现的中文乱问题 -->
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<!--解决服务器端发送的数据 与浏览器接受的数据不一致问题 配置:fastjsonHttpMessageConverter  -->
+			<bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<!-- 避免IE执行AJAX时,返回JSON字符串时出现下载文件的问题
+					这里必须先配置text/html -->
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<!--配置features : SerializerFeature[]:解决json字符串日期转换问题  -->
+				<property name="features">
+					<array> <value>WriteDateUseDateFormat</value> </array>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- 配置文件上传解析器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="maxUploadSize" value="5000000000" />
+	</bean>
+	<!-- 配置拦截器 -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!--注意修改拦截器的路径 包括开发者用户和后台管理用户  -->
+			<mvc:mapping path="/manager/backend/**"/>
+			<mvc:mapping path="/dev/flatform/**"/>
+			<bean class="cn.appsys.interceptor.SysInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>
