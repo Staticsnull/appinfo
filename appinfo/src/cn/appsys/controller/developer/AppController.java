@@ -169,13 +169,13 @@ public class AppController {
 		model.addAttribute("queryCategoryLevel2", queryCategoryLevel2);
 		model.addAttribute("queryCategoryLevel3", queryCategoryLevel3);
 		model.addAttribute("queryFlatformId",queryFlatformId);
-		//二级分类列表和三级分类列表 回显
+		//二级分类列表和三级分类列表 回显  后期优化
 		if(null != queryCategoryLevel2 && !"".equals(queryCategoryLevel2)){
-			categoryLevel2List = getCategoryList(queryCategoryLevel1.toString());
+			categoryLevel2List = getCategoryList(queryCategoryLevel1);
 			model.addAttribute("categoryLevel2List",categoryLevel2List);
 		}
 		if(null != queryCategoryLevel3 && !"".equals(queryCategoryLevel3)){
-			categoryLevel3List = getCategoryList(queryCategoryLevel2.toString());
+			categoryLevel3List = getCategoryList(queryCategoryLevel2);
 			model.addAttribute("categoryLevel3List",categoryLevel3List);
 		}
 		return "developer/appinfolist";
@@ -187,10 +187,10 @@ public class AppController {
 	 * @param pid
 	 * @return
 	 */
-	public List<AppCategory> getCategoryList (String pid){
+	public List<AppCategory> getCategoryList (Integer pid){
 		List<AppCategory> categoryLevelList = null;
 		try {
-			categoryLevelList = appCategoryService.getAppCategoryListByParentId(pid==null?null:Integer.parseInt(pid));
+			categoryLevelList = appCategoryService.getAppCategoryListByParentId(pid==null?null:pid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -203,11 +203,8 @@ public class AppController {
 	 */
 	@RequestMapping(value="/categorylevellist.json",method=RequestMethod.GET)
 	@ResponseBody
-	public List<AppCategory> getAppCategoryList(@RequestParam String pid){
+	public List<AppCategory> getAppCategoryList(@RequestParam Integer pid){
 		logger.info(" getAppCategoryList==:pid"+pid);
-		if("".equals(pid)){
-			pid = null;
-		}
 		return getCategoryList(pid);
 	}
 	/**

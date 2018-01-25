@@ -4,26 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="cn.appsys.dao.appinfo.AppInfoMapper">
-	<!--根据软件名称,APP状态,所属平台,一级分类,二级分类,
-		三级分类,开发者id,进行模糊查询  -->
-	<select id="getAppInfoList" resultType="AppInfo">
-		select a.id, a.softwareName,a.APKName,a.supportROM,a.softwareSize,a.devId,
-				(select devName from dev_user where id = a.devId) as devName,
-				a.status,
-				(select valueName from data_dictionary d where  a.status=d.valueId AND d.typeCode='APP_STATUS') as statusName,
-				a.flatformId,
-				(select valueName from data_dictionary d where  a.flatformId=d.valueId AND d.typeCode='APP_FLATFORM') as flatformName,
-				a.categoryLevel1,
-				(select categoryName from app_category c where  c.id=a.categoryLevel1) as categoryLevel1Name,
-				a.categoryLevel2,
-				(select categoryName from app_category c where  c.id=a.categoryLevel2) as categoryLevel2Name,
-				a.categoryLevel3,
-				(select categoryName from app_category c where  c.id=a.categoryLevel3) as categoryLevel3Name,
-				a.downloads,
-				a.onSaleDate,
-				a.versionId,
-				(select v.versionNo from app_version v where v.id=a.versionId ) as versionNo
-			from  app_info a
+	<sql id="queryInfo">
 		<where>
 			<if test="softwareName != null and softwareName != ''">
 				and a.softwareName like CONCAT ('%',#{softwareName},'%')
@@ -47,35 +28,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				and a.devId = #{devId}
 			</if>
 		</where>
+	</sql>
+
+	<!--根据软件名称,APP状态,所属平台,一级分类,二级分类,
+		三级分类,开发者id,进行模糊查询  -->
+	<select id="getAppInfoList" resultType="AppInfo">
+		select a.id, a.softwareName,a.APKName,a.supportROM,a.softwareSize,a.devId,
+				(select devName from dev_user where id = a.devId) as devName,
+				a.status,
+				(select valueName from data_dictionary d where  a.status=d.valueId AND d.typeCode='APP_STATUS') as statusName,
+				a.flatformId,
+				(select valueName from data_dictionary d where  a.flatformId=d.valueId AND d.typeCode='APP_FLATFORM') as flatformName,
+				a.categoryLevel1,
+				(select categoryName from app_category c where  c.id=a.categoryLevel1) as categoryLevel1Name,
+				a.categoryLevel2,
+				(select categoryName from app_category c where  c.id=a.categoryLevel2) as categoryLevel2Name,
+				a.categoryLevel3,
+				(select categoryName from app_category c where  c.id=a.categoryLevel3) as categoryLevel3Name,
+				a.downloads,
+				a.onSaleDate,
+				a.versionId,
+				(select v.versionNo from app_version v where v.id=a.versionId ) as versionNo
+			from  app_info a
+			<include refid="queryInfo"/>
 		order by creationDate DESC limit #{from},#{pageSize}
 	</select>
 	<!-- 根据软件名称,app状态,一级分类,二级分类,三级分类,
 		app所属平台,开发者id 获取总记录数 -->
 	<select id="getAppInfoCount" resultType="Int">
 		select count(*) as count from app_info a
-			<trim prefix="where" prefixOverrides="and | or">
-				<if test="softwareName != null and softwareName != ''">
-					and a.softwareName like CONCAT ('%',#{softwareName},'%')
-				</if>
-				<if test="status != null">
-					and a.status = #{status}
-				</if>
-				<if test="categoryLevel1 != null">
-					and a.categoryLevel1 = #{categoryLevel1}
-				</if>
-				<if test="categoryLevel2 != null">
-					and a.categoryLevel2 = #{categoryLevel2}
-				</if>
-				<if test="categoryLevel3 != null">
-					and a.categoryLevel3 = #{categoryLevel3}
-				</if>
-				<if test="flatformId != null">
-					and a.flatformId = #{flatformId}
-				</if>
-				<if test="devId != null">
-					and a.devId = #{devId}
-				</if>
-			</trim>
+			<include refid="queryInfo"/>
 	</select>
 	<!-- 根据AppInfo id 已经APK名称获取 appinfo -->
 	<select id="getAppInfo" resultType="AppInfo">
