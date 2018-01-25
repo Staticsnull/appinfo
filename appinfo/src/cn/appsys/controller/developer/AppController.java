@@ -190,7 +190,7 @@ public class AppController {
 	public List<AppCategory> getCategoryList (Integer pid){
 		List<AppCategory> categoryLevelList = null;
 		try {
-			categoryLevelList = appCategoryService.getAppCategoryListByParentId(pid==null?null:pid);
+			categoryLevelList = appCategoryService.getAppCategoryListByParentId(pid);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
