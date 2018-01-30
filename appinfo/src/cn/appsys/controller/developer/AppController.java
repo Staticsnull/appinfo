@@ -639,8 +639,8 @@ public class AppController {
 						 +"&aid="+appVersion.getAppId()
 						 +"&error=error3";
 			}
-			appVersion.setCreatedBy(((DevUser)session.getAttribute(Constants.DEV_USER_SESSION)).getId());
-			appVersion.setCreationDate(new Date());
+			appVersion.setModifyBy(((DevUser)session.getAttribute(Constants.DEV_USER_SESSION)).getId());
+			appVersion.setModifyDate(new Date());
 			appVersion.setApkFileName(apkFileName);
 			appVersion.setDownloadLink(downloadLink);
 			appVersion.setApkLocPath(apkLocPath);
