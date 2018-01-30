@@ -82,7 +82,7 @@ public interface AppInfoMapper {
 	 */
 	int modify(AppInfo appInfo) throws Exception;
 	/**
-	 * 根据appId，更新最新versionId
+	 * 根据id，更新最新versionId
 	 * @param versionId
 	 * @param appId updateVersionId
 	 * @return
