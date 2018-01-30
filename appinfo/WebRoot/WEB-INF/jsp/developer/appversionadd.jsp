@@ -63,8 +63,10 @@
 									<td>${appVersion.versionSize }</td>
 									<td>${appVersion.publishStatusName }</td>
 									<td>
+									<!-- 注意:apk文件对应的下载地址  -->
 									<a href="${appVersion.downloadLink }">${appVersion.apkFileName }</a>
 									</td>
+									<!--注意此处用了jstl中fmt:formatDate标签 记得引入fmt标签 对时间进行了转换  -->
 									<td><fmt:formatDate value="${appVersion.modifyDate }" pattern="yyyy-MM-dd"/></td>
 								</tr>
 							</c:forEach>
@@ -86,7 +88,8 @@
          <br>
         <form class="form-horizontal form-label-left" action="addversionsave" method="post" enctype="multipart/form-data">
            <!-- 隐藏的appId -->
-           <input type="hidden" name="appId" name="appId" value="${appVersion.appId}">
+          <input type="hidden" name="appId" name="appId" value="${appVersion.appId}">
+          
           <div class="item form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">版本号 <span class="required">*</span>
             </label>
@@ -124,6 +127,7 @@
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">apk文件 <span class="required">*</span>
             </label>
             <div class="col-md-6 col-sm-6 col-xs-12">
+            <!--上传文件的错误信息  -->
             <input type="file" class="form-control col-md-7 col-xs-12" name="a_downloadLink" id="a_downloadLink"  required="required"/>
             ${fileUploadError }
             </div>

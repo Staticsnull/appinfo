@@ -7,7 +7,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getAppversionListByAppId" resultType="appVersion">
 		select v.*,
 			(select a.softwareName from app_info a where a.id=v.appId ) as appName,
-			(select valueName from data_dictionary d where  v.publishStatus=d.valueId AND d.typeCode='PUBLISH_STATUS') as publishStatusName
+			(select valueName from data_dictionary d 
+				where  v.publishStatus=d.valueId 
+				AND d.typeCode='PUBLISH_STATUS') as publishStatusName
 			from  app_version  v
 		<where>
 			<if test="appId != null">

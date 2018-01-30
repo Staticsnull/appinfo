@@ -550,6 +550,7 @@ public class AppController {
 		appVersion.setDownloadLink(downloadLink);
 		try {
 			if(appVersionService.appsysAdd(appVersion)){
+				//添加成功 重定向至list页面
 				return "redirect:/dev/flatform/app/list";
 			}
 		} catch (Exception e) {

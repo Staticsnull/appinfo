@@ -30,15 +30,19 @@ public class AppVersionServiceImpl implements AppVersionService {
 	public boolean appsysAdd(AppVersion appVersion) throws Exception {
 		boolean flag = false;
 		Integer versionId = null;
+		//使用主键增加app版本信息 
 		if(appVersionMapper.add(appVersion) > 0){
+			//通过新增的appVersion 获取appInfo中的versionId 
 			versionId = appVersion.getId();
 			flag = true;
 		}
-		if(appInfoMapper.updateVersionId(versionId,appVersion.getAppId()) > 0 && flag){
-			flag = true;
-		}
-//		return appInfoMapper.updateVersionId(versionId,appVersion.getAppId()) > 0 && flag ? true : false;
-		return flag;
+//		if(appInfoMapper.updateVersionId(versionId,appVersion.getAppId()) > 0 && flag){
+//			flag = true;
+//		}
+//		return flag;
+		//根据appInfo中id(来自appVersion中的appId)修改versionId
+		return appInfoMapper.updateVersionId(versionId,appVersion.getAppId()) > 0 && flag ? true : false;
+		
 	}
 
 	@Override
