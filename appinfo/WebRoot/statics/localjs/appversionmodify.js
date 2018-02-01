@@ -1,3 +1,22 @@
+$(function(){  
+	$("#back").on("click",function(){
+		window.location.href = "list";
+	});
+	
+	//上传APK文件---------------------
+	var downloadLink = $("#downloadLink").val();
+	var id = $("#id").val();
+	var apkFileName = $("#apkFileName").val();
+	if(downloadLink == null || downloadLink == "" ){
+		$("#uploadfile").show();
+	}else{
+		//点击下载的时候 直接跳转的是页面的链接
+		$("#apkFile").append("<p>"+apkFileName+
+							"&nbsp;&nbsp;<a href=\""+downloadLink+"?m="+Math.random()+"\" >下载</a> &nbsp;&nbsp;" +
+							"<a href=\"javascript:;\" onclick=\"delfile('"+id+"');\">删除</a></p>");
+	}
+
+});
 //根据id删除apkFile
 function delfile(id){
 	$.ajax({
@@ -19,26 +38,6 @@ function delfile(id){
 		}
 	});  
 }
-
-$(function(){  
-	$("#back").on("click",function(){
-		window.location.href = "list";
-	});
-	
-	//上传APK文件---------------------
-	var downloadLink = $("#downloadLink").val();
-	var id = $("#id").val();
-	var apkFileName = $("#apkFileName").val();
-	if(downloadLink == null || downloadLink == "" ){
-		$("#uploadfile").show();
-	}else{
-		//点击下载的时候 直接跳转的是页面的链接
-		$("#apkFile").append("<p>"+apkFileName+
-							"&nbsp;&nbsp;<a href=\""+downloadLink+"?m="+Math.random()+"\" >下载</a> &nbsp;&nbsp;" +
-							"<a href=\"javascript:;\" onclick=\"delfile('"+id+"');\">删除</a></p>");
-	}
-
-});
       
       
       

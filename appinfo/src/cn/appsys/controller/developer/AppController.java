@@ -639,18 +639,18 @@ public class AppController {
 						 +"&aid="+appVersion.getAppId()
 						 +"&error=error3";
 			}
-			appVersion.setModifyBy(((DevUser)session.getAttribute(Constants.DEV_USER_SESSION)).getId());
-			appVersion.setModifyDate(new Date());
-			appVersion.setApkFileName(apkFileName);
-			appVersion.setDownloadLink(downloadLink);
-			appVersion.setApkLocPath(apkLocPath);
-			try {
-				if(appVersionService.modify(appVersion)){
-					return "redirect:/dev/flatform/app/list";
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+		}
+		appVersion.setModifyBy(((DevUser)session.getAttribute(Constants.DEV_USER_SESSION)).getId());
+		appVersion.setModifyDate(new Date());
+		appVersion.setApkFileName(apkFileName);
+		appVersion.setDownloadLink(downloadLink);
+		appVersion.setApkLocPath(apkLocPath);
+		try {
+			if(appVersionService.modify(appVersion)){
+				return "redirect:/dev/flatform/app/list";
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return "developer/appversionmodify";
 	}
